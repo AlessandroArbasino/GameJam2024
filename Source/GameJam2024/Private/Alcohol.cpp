@@ -1,0 +1,37 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Alcohol.h"
+
+#include "Components/BoxComponent.h"
+
+
+// Sets default values
+AAlcohol::AAlcohol()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	DefaultRout=CreateDefaultSubobject<USceneComponent>("DefaultRoot");
+	RootComponent=DefaultRout;
+
+	AlcoholCollider=CreateDefaultSubobject<UBoxComponent>("Collider");
+	AlcoholCollider->SetupAttachment(DefaultRout);
+
+	AlcoholCollider->OnComponentBeginOverlap.AddDynamic(this,&AAlcohol::AlcoholBeginOverlap);
+}
+
+// Called when the game starts or when spawned
+void AAlcohol::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+// Called every frame
+void AAlcohol::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+

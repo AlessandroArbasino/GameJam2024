@@ -3,12 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Activable.h"
 #include "UObject/Interface.h"
 #include "Chargable.generated.h"
 
-// This class does not need to be modified.
-DECLARE_MULTICAST_DELEGATE(OnCharge)
-DECLARE_MULTICAST_DELEGATE(OnDischarge)
 UINTERFACE(MinimalAPI)
 class UChargable : public UInterface
 {
@@ -26,15 +24,18 @@ private:
 	bool CanDischarge=false;
 	bool IsCharged=false;
 
-	OnDischarge DischargeEvent;
-	OnCharge ChargeEvent;
-	
+	TArray<IActivable> ActivableArray;
 public :
 
 	void Charge(IChargable Charger)
 	{
 		IsCharged=true;
-		ChargeEvent.Broadcast();
+	
+		for (auto Activable : ActivableArray)
+		{
+			Activable.Active();
+		}
+	
 		Charger.DisCharge();
 	}
 
@@ -43,7 +44,11 @@ public :
 		if(CanDischarge)
 		{
 			IsCharged=false;
-			DischargeEvent.Broadcast();
+			
+			for (auto Activable : ActivableArray)
+			{
+				Activable.Deactive();
+			}
 		}
 	}
 
