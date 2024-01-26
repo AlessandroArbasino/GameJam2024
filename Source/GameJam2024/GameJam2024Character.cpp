@@ -80,6 +80,21 @@ void AGameJam2024Character::Tick(float DeltaSeconds)
 		PerformInteractionCheck();
 }
 
+void AGameJam2024Character::Charge(IChargable* Charger)
+{
+	IChargable::Charge(Charger);
+
+	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
+	
+}
+
+void AGameJam2024Character::DisCharge()
+{
+	IChargable::DisCharge();
+
+	GetCapsuleComponent()->SetCollisionProfileName("Player");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 

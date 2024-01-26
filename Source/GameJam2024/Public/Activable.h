@@ -21,8 +21,8 @@ class GAMEJAM2024_API IActivable
 	GENERATED_BODY()
 
 public:
-	void Active();
+	virtual void Active();
 
-	void Deactive();
+	virtual void Deactive();
 public:
 };

@@ -17,8 +17,7 @@ AAlcohol::AAlcohol()
 
 	AlcoholCollider=CreateDefaultSubobject<UBoxComponent>("Collider");
 	AlcoholCollider->SetupAttachment(DefaultRout);
-
-	AlcoholCollider->OnComponentBeginOverlap.AddDynamic(this,&AAlcohol::AlcoholBeginOverlap);
+	
 }
 
 // Called when the game starts or when spawned

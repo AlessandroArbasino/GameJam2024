@@ -20,34 +20,33 @@ class GAMEJAM2024_API IChargable
 {
 	GENERATED_BODY()
 
-private:
+public :
 	bool CanDischarge=false;
 	bool IsCharged=false;
 
-	TArray<IActivable> ActivableArray;
-public :
+	TArray<IActivable*> ActivableArray;
 
-	void Charge(IChargable Charger)
+	virtual void Charge(IChargable* Charger)
 	{
 		IsCharged=true;
 	
-		for (auto Activable : ActivableArray)
+		for (IActivable*  Activable : ActivableArray)
 		{
-			Activable.Active();
+			Activable->Active();
 		}
 	
-		Charger.DisCharge();
+		Charger->DisCharge();
 	}
 
-	void DisCharge()
+	virtual void DisCharge()
 	{
 		if(CanDischarge)
 		{
 			IsCharged=false;
 			
-			for (auto Activable : ActivableArray)
+			for (IActivable* Activable : ActivableArray)
 			{
-				Activable.Deactive();
+				Activable->Deactive();
 			}
 		}
 	}
