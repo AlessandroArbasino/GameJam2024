@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Public/IInteractable.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -20,7 +21,7 @@ AGameJam2024Character::AGameJam2024Character()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -47,7 +48,8 @@ AGameJam2024Character::AGameJam2024Character()
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -62,11 +64,20 @@ void AGameJam2024Character::BeginPlay()
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void AGameJam2024Character::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (GetWorld()->TimeSince(InteractionData.LastInteractionCheckTime) > InteractionCheckFrequency)
+		PerformInteractionCheck();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,8 +86,8 @@ void AGameJam2024Character::BeginPlay()
 void AGameJam2024Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -89,7 +100,10 @@ void AGameJam2024Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogTemplateCharacter, Error,
+		       TEXT(
+			       "'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
+		       ), *GetNameSafe(this));
 	}
 }
 
@@ -106,7 +120,7 @@ void AGameJam2024Character::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
@@ -126,5 +140,106 @@ void AGameJam2024Character::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+//Interactions
+
+//Performed every InteractionCheckFrequency time, not every single frame
+void AGameJam2024Character::PerformInteractionCheck()
+{
+	InteractionData.LastInteractionCheckTime = GetWorld()->GetTimeSeconds();
+
+	//default values for raycast
+	FVector TraceStart = GetPawnViewLocation();
+	FVector TraceEnd = TraceStart + GetViewRotation().Vector() * InteractionCheckDistance;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	FHitResult HitResult;
+
+	//Collision with object found
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+	{
+		if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+		{
+			DrawDebugLine(GetWorld(), TraceStart, HitResult.Location, FColor::Green, false, 0.2, 0, 5);
+			if (HitResult.GetActor() != InteractionData.CurrentInteractable)
+			{
+				FoundInteractable(HitResult.GetActor());
+				return;
+			}
+			if (HitResult.GetActor() == InteractionData.CurrentInteractable)
+				return;
+		}
+		NoInteractableFound();
+	}
+	//no collision with objects
+	else
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Yellow, false, 0.2, 0, 5);
+}
+
+void AGameJam2024Character::FoundInteractable(AActor* NewInteractable)
+{
+	// if (IsInteracting())
+	// 	EndInteract();
+	if (InteractionData.CurrentInteractable)
+	{
+		TargetInteractable = InteractionData.CurrentInteractable;
+		TargetInteractable->EndFocus();
+	}
+
+	InteractionData.CurrentInteractable = NewInteractable;
+	TargetInteractable = NewInteractable;
+	TargetInteractable->BeginFocus();
+}
+
+void AGameJam2024Character::NoInteractableFound()
+{
+	if (InteractionData.CurrentInteractable)
+	{
+		//check required for pickup items destroyed in world before triggering the end focus, leading to null reference exception
+		if (IsValid(TargetInteractable.GetObject()))
+		{
+			TargetInteractable->EndFocus();
+		}
+		InteractionData.CurrentInteractable = nullptr;
+		TargetInteractable = nullptr;
+	}
+}
+
+void AGameJam2024Character::BeginInteract()
+{
+	//check for changes since interaction begun
+	PerformInteractionCheck();
+
+	if (InteractionData.CurrentInteractable)
+	{
+		if (IsValid(TargetInteractable.GetObject()))
+		{
+			TargetInteractable->BeginInteraction();
+			if (FMath::IsNearlyZero(TargetInteractable->InteractableData.InteractionDuration, 0.1f))
+			{
+				Interact();
+			}
+		}
+	}
+}
+
+void AGameJam2024Character::EndInteract()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
+	if (IsValid(TargetInteractable.GetObject()))
+	{
+		TargetInteractable->EndInteraction();
+	}
+}
+
+void AGameJam2024Character::Interact()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
+	if (IsValid(TargetInteractable.GetObject()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("not interacting with Moveable"));
+		TargetInteractable->Interact(this);
 	}
 }

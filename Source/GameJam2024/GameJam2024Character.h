@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "GameJam2024Character.generated.h"
 
+class IInteractable;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -14,6 +15,24 @@ class UInputAction;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+
+USTRUCT()
+struct FInteractionData
+{
+	GENERATED_USTRUCT_BODY()
+
+	FInteractionData()
+	{
+		CurrentInteractable = nullptr;
+		LastInteractionCheckTime = 0.0f;
+	}
+
+	UPROPERTY()
+	AActor* CurrentInteractable;
+
+	UPROPERTY()
+	float LastInteractionCheckTime;
+};
 
 UCLASS(config=Game)
 class AGameJam2024Character : public ACharacter
@@ -44,6 +63,18 @@ class AGameJam2024Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IInteractable", meta = (AllowPrivateAccess = "true"))
+	TScriptInterface<IInteractable> TargetInteractable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	float InteractionCheckFrequency;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	float InteractionCheckDistance;
+
+	FTimerHandle TimerHandle_Interaction;
+	FInteractionData InteractionData;
+
 public:
 	AGameJam2024Character();
 	
@@ -55,7 +86,12 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+	void PerformInteractionCheck();
+	void FoundInteractable(AActor* NewInteractable);
+	void NoInteractableFound();
+	void BeginInteract();
+	void EndInteract();
+	void Interact();
 
 protected:
 	// APawn interface
@@ -63,6 +99,7 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+	void Tick(float DeltaSeconds);
 
 public:
 	/** Returns CameraBoom subobject **/
