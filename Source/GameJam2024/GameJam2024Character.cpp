@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Public/Chargable.h"
 #include "Public/IInteractable.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -85,7 +86,6 @@ void AGameJam2024Character::Charge(IChargable* Charger)
 	IChargable::Charge(Charger);
 
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
-	
 }
 
 void AGameJam2024Character::DisCharge()
@@ -112,6 +112,9 @@ void AGameJam2024Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGameJam2024Character::Look);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this,
+		                                   &AGameJam2024Character::Interact);
 	}
 	else
 	{

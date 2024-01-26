@@ -3,16 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Chargable.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Logging/LogMacros.h"
+#include "Public/Chargable.h"
+#include "Public/IInteractable.h"
 #include "GameJam2024Character.generated.h"
-
-class IInteractable;
-class USpringArmComponent;
-class UCameraComponent;
-class UInputMappingContext;
 class UInputAction;
+class UInputMappingContext;
+class UCameraComponent;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -36,7 +35,7 @@ struct FInteractionData
 };
 
 UCLASS(config=Game)
-class AGameJam2024Character : public ACharacter,public IChargable
+class AGameJam2024Character : public ACharacter, public IChargable
 {
 	GENERATED_BODY()
 
@@ -47,7 +46,7 @@ class AGameJam2024Character : public ACharacter,public IChargable
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -64,6 +63,8 @@ class AGameJam2024Character : public ACharacter,public IChargable
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IInteractable", meta = (AllowPrivateAccess = "true"))
 	TScriptInterface<IInteractable> TargetInteractable;
@@ -78,15 +79,14 @@ class AGameJam2024Character : public ACharacter,public IChargable
 
 public:
 	AGameJam2024Character();
-	
 
 protected:
-
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+	
 	void PerformInteractionCheck();
 	void FoundInteractable(AActor* NewInteractable);
 	void NoInteractableFound();
@@ -97,7 +97,7 @@ protected:
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 	void Tick(float DeltaSeconds);
@@ -110,4 +110,3 @@ public:
 	virtual void Charge(IChargable* Charger) override;
 	virtual void DisCharge() override;
 };
-
