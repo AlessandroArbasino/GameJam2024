@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Chargable.h"
 #include "IInteractable.h"
+#include "NeuronNetwork.h"
 #include "GameFramework/Actor.h"
 #include "Neuron.generated.h"
 
@@ -23,11 +24,21 @@ private:
 	UPROPERTY(EditAnywhere, Category="Activable")
 	TArray<AActor*> Activables;
 
+	UPROPERTY(EditAnywhere, Category="Network")
+	ANeuronNetwork* Network;
+
+	
+
 public:
+	
 	ANeuron();
 	virtual void Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode) override;
 	void BeginFocus();
 	void EndFocus();
+	
+	UFUNCTION()
+	void UpdateNeuronNetwork(bool newCharge);
+	
 
 protected:
 	virtual void BeginPlay() override;

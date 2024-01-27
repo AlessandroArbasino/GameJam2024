@@ -24,8 +24,12 @@ void ANeuron::BeginPlay()
 	Super::BeginPlay();
 	ActivableArray = Activables;
 	InteractableData.InteractableType = EInteractableType::Neuron;
-
-}	
+	if (Network != nullptr)
+		Network->NeuronNetworkUpdate.AddDynamic(this, &ANeuron::UpdateNeuronNetwork);
+	else
+		UE_LOG(LogTemp, Warning, TEXT("NETWORK MISSING"));
+}
+	
 // Called every frame
 void ANeuron::Tick(float DeltaTime)
 {
@@ -36,6 +40,7 @@ void ANeuron::Tick(float DeltaTime)
 void ANeuron::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
 	PlayerCharacter->ChargeExcange(this);
+	Network->UpdateNeuronNetworkNodes(IsCharged);
 }
 
 void ANeuron::BeginFocus()
@@ -56,4 +61,9 @@ void ANeuron::EndFocus()
 		Mesh->SetRenderCustomDepth(false);
 		UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - false"));
 	}
+}
+
+void ANeuron::UpdateNeuronNetwork(bool newCharge)
+{
+	SetCharge(newCharge);
 }

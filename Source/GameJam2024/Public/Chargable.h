@@ -79,4 +79,12 @@ public :
 			}
 		}
 	}
+
+	virtual void SetCharge(bool newCharge)
+	{
+		if (newCharge)
+			Charge();
+		else
+			Discharge();
+	}
 };
