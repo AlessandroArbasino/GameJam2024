@@ -315,7 +315,9 @@ void AGameJam2024Character::StopSwing()
 	IsSwing = false;
 	IsThrowing =false;
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	LaunchCharacter(GetActorForwardVector() * 1000, false, false);
+	FVector Direction = GetActorLocation()-InteractionData.CurrentInteractable->GetActorLocation();
+	Direction.Z=JumpForceZ;
+	LaunchCharacter((Direction).GetSafeNormal() * JumpForceForward, true, true);
 	InteractionData.CurrentInteractable->SetActorRotation(FRotator::ZeroRotator);
 	NoInteractableFound();
 }

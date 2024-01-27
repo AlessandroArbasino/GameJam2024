@@ -75,6 +75,10 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	float InteractionCheckDistance;
 
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
+	float JumpForceZ=300;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
+	float JumpForceForward=1000;
 	FTimerHandle TimerHandle_Interaction;
 
 
