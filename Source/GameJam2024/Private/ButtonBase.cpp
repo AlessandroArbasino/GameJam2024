@@ -37,9 +37,10 @@ void AButtonBase::Tick(float DeltaTime)
 }
 void AButtonBase::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
-	for (IActivable*  Activable : ActivableArray)
+	for (AActor*  Activable : ActivableActor)
 	{
-		Activable->Active();
+		if(Activable->GetClass()->ImplementsInterface(UActivable::StaticClass()))
+			Cast<IActivable>(Activable)->Active();
 		UE_LOG(LogTemp,Warning, TEXT("{0}"))
 	}
 }

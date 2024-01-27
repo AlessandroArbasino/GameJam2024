@@ -15,10 +15,10 @@ class GAMEJAM2024_API AAlcohol : public AActor, public IChargable
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	UBoxComponent* AlcoholCollider;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USceneComponent* DefaultRout;
 	
 public:

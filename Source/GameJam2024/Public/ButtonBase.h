@@ -31,9 +31,11 @@ protected:
 	virtual void EndFocus() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditInstanceOnly, Category="Activable Items")
+public:
+	UPROPERTY(EditAnywhere, Category="Activable Items")
 	TArray<IActivable*> ActivableArray;
+	UPROPERTY(EditAnywhere, Category="Activable Items")
+	TArray<AActor*> ActivableActor;
 
 	
 };
