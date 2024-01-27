@@ -23,8 +23,9 @@ void ANeuron::BeginPlay()
 {
 	Super::BeginPlay();
 	ActivableArray = Activables;
-}
+	InteractableData.InteractableType = EInteractableType::Neuron;
 
+}	
 // Called every frame
 void ANeuron::Tick(float DeltaTime)
 {

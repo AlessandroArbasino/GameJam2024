@@ -1,4 +1,3 @@
-
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -41,8 +40,6 @@ class AGameJam2024Character : public ACharacter, public IChargable
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	UCableComponent* Cable;
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -81,7 +78,14 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	FTimerHandle TimerHandle_Interaction;
 	FInteractionData InteractionData;
 
-	
+	UPROPERTY()
+	USceneComponent* SwingPivot;
+
+	UPROPERTY()
+	float SwingTimer = 0;
+
+	UPROPERTY()
+	FRotator StartingRotator;
 
 public:
 	AGameJam2024Character();
@@ -91,13 +95,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	float BoneScale = 1.0f;
-	
+
 	UPROPERTY(VisibleAnywhere)
 	float CableLenghtPlayer = 1.0f;
 
 	UPROPERTY(VisibleAnywhere)
-	FVector LaunchSpeed{0,0,100};
-	
+	FVector LaunchSpeed{0, 0, 100};
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -122,7 +126,7 @@ protected:
 
 	void Swing();
 	void StopSwing();
-	void CalculateSwingForce();
+	void CalculateSwingForce(float DeltaTime);
 
 public:
 	/** Returns CameraBoom subobject **/
