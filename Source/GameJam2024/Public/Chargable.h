@@ -22,33 +22,27 @@ class GAMEJAM2024_API IChargable
 
 public :
 	bool CanDischarge = true;
-	
+
 	bool IsCharged = false;
 
-	TArray<IActivable*> ActivableArray;
+	TArray<AActor*> ActivableArray;
 
-	virtual void Charge(IChargable* Charger)
+	virtual void ChargeExcange(IChargable* Target)
 	{
-		IsCharged = true;
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, "Object Charged");
-		for (IActivable* Activable : ActivableArray)
+		if (!CanDischarge || !Target->CanDischarge)
+			return;
+		if (IsCharged == Target->IsCharged)
+			return;
+
+		if (IsCharged)
 		{
-			Activable->Active();
+			Target->Charge();
+			Discharge();
 		}
-		Charger->DisCharge();
-		GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Green, "Charged Discharged");
-	}
-
-	virtual void DisCharge()
-	{
-		if (CanDischarge)
+		else
 		{
-			IsCharged = false;
-
-			for (IActivable* Activable : ActivableArray)
-			{
-				Activable->Deactive();
-			}
+			Target->Discharge();
+			Charge();
 		}
 	}
 
@@ -60,5 +54,29 @@ public :
 	bool GetCanDischarge() const
 	{
 		return CanDischarge;
+	}
+
+	virtual void Charge()
+	{
+		IsCharged = true;
+		for (AActor* ActivableActor : ActivableArray)
+		{
+			if (ActivableActor->GetClass()->ImplementsInterface(UActivable::StaticClass()))
+			{
+				Cast<IActivable>(ActivableActor)->Active();
+			}
+		}
+	}
+
+	virtual void Discharge()
+	{
+		IsCharged = false;
+		for (AActor* ActivableActor : ActivableArray)
+		{
+			if (ActivableActor->GetClass()->ImplementsInterface(UActivable::StaticClass()))
+			{
+				Cast<IActivable>(ActivableActor)->Deactive();
+			}
+		}
 	}
 };

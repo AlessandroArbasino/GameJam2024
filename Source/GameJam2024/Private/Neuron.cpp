@@ -8,49 +8,33 @@
 // Sets default values
 ANeuron::ANeuron()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	DefaultRoot = CreateDefaultSubobject<USceneComponent>("Default Scene Root");
-	RootComponent =DefaultRoot;
+	RootComponent = DefaultRoot;
 
-	Mesh= CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(DefaultRoot);
-
 }
 
 // Called when the game starts or when spawned
 void ANeuron::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ActivableArray = Activables;
 }
 
 // Called every frame
 void ANeuron::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 
 void ANeuron::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
-	if(PlayerCharacter->GetIsCharged())
-	{
-		Charge(this);
-		PlayerCharacter->DisCharge();
-	}
-}
-
-void ANeuron::Charge(IChargable* Charger)
-{
-	IChargable::Charge(Charger);
-}
-
-void ANeuron::DisCharge()
-{
-	IChargable::DisCharge();
+	PlayerCharacter->ChargeExcange(this);
 }
 
 void ANeuron::BeginFocus()

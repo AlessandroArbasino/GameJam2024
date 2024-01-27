@@ -81,24 +81,18 @@ void AGameJam2024Character::Tick(float DeltaSeconds)
 		PerformInteractionCheck();
 }
 
-void AGameJam2024Character::Charge(IChargable* Charger)
+void AGameJam2024Character::Charge()
 {
-	IChargable::Charge(Charger);
-
+	IChargable::Charge();
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "PlayerCharged");
-
-	
 }
 
-void AGameJam2024Character::DisCharge()
+void AGameJam2024Character::Discharge()
 {
-	IChargable::DisCharge();
-
+	IChargable::Discharge();
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
-
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
-
 }
 
 //////////////////////////////////////////////////////////////////////////

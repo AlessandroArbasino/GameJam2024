@@ -9,30 +9,27 @@
 #include "Neuron.generated.h"
 
 UCLASS()
-class GAMEJAM2024_API ANeuron : public AActor , public IChargable, public IInteractable
+class GAMEJAM2024_API ANeuron : public AActor, public IChargable, public IInteractable
 {
-
 private:
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere,Category="Item Data")
+	UPROPERTY(EditAnywhere, Category="Item Data")
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere,Category="Item Data")
+	UPROPERTY(VisibleAnywhere, Category="Item Data")
 	USceneComponent* DefaultRoot;
 
-public:	
-	
+	UPROPERTY(EditAnywhere, Category="Activable")
+	TArray<AActor*> Activables;
+
+public:
 	ANeuron();
 	virtual void Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode) override;
-	virtual void Charge(IChargable* Charger) override;
-	virtual void DisCharge() override;
 	void BeginFocus();
 	void EndFocus();
 
 protected:
-	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
 };

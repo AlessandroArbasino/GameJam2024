@@ -26,22 +26,13 @@ void ATerminal::BeginPlay()
 
 	if (IsChargedOnSpawn)
 		IsCharged = true;
+	ActivableArray = Activables;
 }
 
 // Called every frame
 void ATerminal::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ATerminal::Charge(IChargable* Charger)
-{
-	IChargable::Charge(Charger);
-}
-
-void ATerminal::DisCharge()
-{
-	IChargable::DisCharge();
 }
 
 void ATerminal::BeginFocus()
@@ -66,8 +57,5 @@ void ATerminal::EndFocus()
 
 void ATerminal::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
-	if (IsCharged)
-		PlayerCharacter->Charge(this);
-	else
-		Charge(PlayerCharacter);
+	PlayerCharacter->ChargeExcange(this);
 }

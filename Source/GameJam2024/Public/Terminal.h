@@ -19,6 +19,9 @@ class GAMEJAM2024_API ATerminal : public AActor, public IInteractable, public IC
 	UPROPERTY(VisibleAnywhere, Category="Item Data")
 	USceneComponent* DefaultRoot;
 
+	UPROPERTY(EditAnywhere, Category="Activable")
+	TArray<AActor*> Activables;
+
 	UPROPERTY(EditAnywhere, Category="Item Data")
 	bool IsChargedOnSpawn;
 
@@ -33,8 +36,6 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void Charge(IChargable* Charger) override;
-	virtual void DisCharge() override;
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
 	virtual void Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode) override;
