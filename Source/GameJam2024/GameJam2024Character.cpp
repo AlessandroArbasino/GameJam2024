@@ -268,14 +268,14 @@ void AGameJam2024Character::Interact()
 	{
 		TargetInteractable->Interact(this);
 	}
-	if(!IsSwing)
-	{
-		Swing();
-	}
-	else
-	{
-		StopSwing();
-	}
+		// if(!IsSwing)
+		// {
+		// 	Swing();
+		// }
+		// else
+		// {
+		// 	StopSwing();
+		// }
 }
 
 void AGameJam2024Character::Swing()
