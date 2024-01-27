@@ -16,6 +16,9 @@ ATerminal::ATerminal()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(DefaultRoot);
+
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraVFX");
+	NiagaraComponent->SetupAttachment(DefaultRoot);
 }
 
 // Called when the game starts or when spawned
@@ -25,7 +28,10 @@ void ATerminal::BeginPlay()
 	InteractableData.InteractableType = EInteractableType::Terminals;
 
 	if (IsChargedOnSpawn)
+	{
 		IsCharged = true;
+		NiagaraComponent->Activate();
+	}
 	ActivableArray = Activables;
 }
 
@@ -58,4 +64,8 @@ void ATerminal::EndFocus()
 void ATerminal::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
 	PlayerCharacter->ChargeExcange(this);
+	if (IsCharged)
+		NiagaraComponent->Activate();
+	else
+		NiagaraComponent->Deactivate();
 }

@@ -9,6 +9,6 @@ public class GameJam2024 : ModuleRules
 
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] {  "CableComponent" ,"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] {  "CableComponent" ,"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Niagara" });
 	}
 }

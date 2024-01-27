@@ -6,6 +6,8 @@
 #include "Chargable.h"
 #include "IInteractable.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "Terminal.generated.h"
 
 UCLASS()
@@ -18,6 +20,9 @@ class GAMEJAM2024_API ATerminal : public AActor, public IInteractable, public IC
 
 	UPROPERTY(VisibleAnywhere, Category="Item Data")
 	USceneComponent* DefaultRoot;
+
+	UPROPERTY(VisibleAnywhere, Category="Item Data")
+	UNiagaraComponent* NiagaraComponent;
 
 	UPROPERTY(EditAnywhere, Category="Activable")
 	TArray<AActor*> Activables;
