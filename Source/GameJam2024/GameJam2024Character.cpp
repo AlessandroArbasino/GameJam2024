@@ -257,7 +257,6 @@ void AGameJam2024Character::Interact()
 	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
 	if (IsValid(TargetInteractable.GetObject()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("not interacting with Moveable"));
 		TargetInteractable->Interact(this);
 	}
 }

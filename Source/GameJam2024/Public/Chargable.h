@@ -21,29 +21,30 @@ class GAMEJAM2024_API IChargable
 	GENERATED_BODY()
 
 public :
-	bool CanDischarge=false;
-	bool IsCharged=false;
+	bool CanDischarge = true;
+	
+	bool IsCharged = false;
 
 	TArray<IActivable*> ActivableArray;
 
 	virtual void Charge(IChargable* Charger)
 	{
-		IsCharged=true;
-	
-		for (IActivable*  Activable : ActivableArray)
+		IsCharged = true;
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, "Object Charged");
+		for (IActivable* Activable : ActivableArray)
 		{
 			Activable->Active();
 		}
-	
 		Charger->DisCharge();
+		GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Green, "Charged Discharged");
 	}
 
 	virtual void DisCharge()
 	{
-		if(CanDischarge)
+		if (CanDischarge)
 		{
-			IsCharged=false;
-			
+			IsCharged = false;
+
 			for (IActivable* Activable : ActivableArray)
 			{
 				Activable->Deactive();
@@ -60,6 +61,4 @@ public :
 	{
 		return CanDischarge;
 	}
-
-public:
 };
