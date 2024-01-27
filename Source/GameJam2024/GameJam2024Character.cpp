@@ -260,6 +260,7 @@ void AGameJam2024Character::EndInteract()
 	if (IsValid(TargetInteractable.GetObject()))
 	{
 		TargetInteractable->EndInteraction();
+		IsThrowing = false;
 	}
 }
 
@@ -269,6 +270,7 @@ void AGameJam2024Character::Interact()
 	if (IsValid(TargetInteractable.GetObject()))
 	{
 		TargetInteractable->Interact(this);
+		IsThrowing =true;
 	}
 	if (!IsSwing)
 	{

@@ -17,7 +17,7 @@ struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FInteractionData
 {
 	GENERATED_USTRUCT_BODY()
@@ -28,7 +28,7 @@ struct FInteractionData
 		LastInteractionCheckTime = 0.0f;
 	}
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnyWhere,BlueprintReadWrite)
 	AActor* CurrentInteractable;
 
 	UPROPERTY()
@@ -76,7 +76,7 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	float InteractionCheckDistance;
 
 	FTimerHandle TimerHandle_Interaction;
-	FInteractionData InteractionData;
+
 
 	UPROPERTY()
 	USceneComponent* SwingPivot;
@@ -116,6 +116,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	FVector LaunchSpeed{0, 0, 100};
+	
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	FInteractionData InteractionData;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	bool IsThrowing = false;
 
 protected:
 	/** Called for movement input */
