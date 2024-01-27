@@ -40,6 +40,8 @@ void ANeuron::Tick(float DeltaTime)
 void ANeuron::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
 	PlayerCharacter->ChargeExcange(this);
+	
+	if(!Network) return;
 	Network->UpdateNeuronNetworkNodes(IsCharged);
 }
 
