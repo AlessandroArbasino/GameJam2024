@@ -6,6 +6,7 @@
 #include "Chargable.h"
 #include "IInteractable.h"
 #include "NeuronNetwork.h"
+#include "NiagaraComponent.h"
 #include "GameFramework/Actor.h"
 #include "Neuron.generated.h"
 
@@ -27,18 +28,20 @@ private:
 	UPROPERTY(EditAnywhere, Category="Network")
 	ANeuronNetwork* Network;
 
-	
+	UPROPERTY(EditAnywhere, Category="Item Data")
+	bool IsChargedOnSpawn;
+
+	UPROPERTY(VisibleAnywhere, Category="Item Data")
+	UNiagaraComponent* NiagaraComponent;
 
 public:
-	
 	ANeuron();
 	virtual void Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode) override;
 	void BeginFocus();
 	void EndFocus();
-	
+
 	UFUNCTION()
 	void UpdateNeuronNetwork(bool newCharge);
-	
 
 protected:
 	virtual void BeginPlay() override;

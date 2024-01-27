@@ -19,6 +19,7 @@ ATerminal::ATerminal()
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraVFX");
 	NiagaraComponent->SetupAttachment(DefaultRoot);
+	NiagaraComponent->SetAutoActivate(false);
 }
 
 // Called when the game starts or when spawned

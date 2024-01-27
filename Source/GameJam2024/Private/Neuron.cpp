@@ -3,6 +3,7 @@
 
 #include "Neuron.h"
 
+#include "NiagaraComponent.h"
 #include "GameJam2024/GameJam2024Character.h"
 
 // Sets default values
@@ -16,6 +17,10 @@ ANeuron::ANeuron()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(DefaultRoot);
+
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraVFX");
+	NiagaraComponent->SetupAttachment(DefaultRoot);
+	NiagaraComponent->SetAutoActivate(false);
 }
 
 // Called when the game starts or when spawned
@@ -26,10 +31,14 @@ void ANeuron::BeginPlay()
 	InteractableData.InteractableType = EInteractableType::Neuron;
 	if (Network != nullptr)
 		Network->NeuronNetworkUpdate.AddDynamic(this, &ANeuron::UpdateNeuronNetwork);
-	else
-		UE_LOG(LogTemp, Warning, TEXT("NETWORK MISSING"));
+
+	if (IsChargedOnSpawn)
+	{
+		IsCharged = true;
+		NiagaraComponent->Activate();
+	}
 }
-	
+
 // Called every frame
 void ANeuron::Tick(float DeltaTime)
 {
@@ -40,9 +49,12 @@ void ANeuron::Tick(float DeltaTime)
 void ANeuron::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
 	PlayerCharacter->ChargeExcange(this);
-	
-	if(!Network) return;
+	if (!Network) return;
 	Network->UpdateNeuronNetworkNodes(IsCharged);
+	if (IsCharged)
+		NiagaraComponent->Activate();
+	else
+		NiagaraComponent->Deactivate();
 }
 
 void ANeuron::BeginFocus()
