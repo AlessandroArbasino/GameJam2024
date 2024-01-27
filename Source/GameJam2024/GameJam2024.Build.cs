@@ -6,8 +6,9 @@ public class GameJam2024 : ModuleRules
 {
 	public GameJam2024(ReadOnlyTargetRules Target) : base(Target)
 	{
+
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] {  "CableComponent" ,"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 	}
 }

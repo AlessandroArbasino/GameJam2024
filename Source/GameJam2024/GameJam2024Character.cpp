@@ -55,6 +55,8 @@ AGameJam2024Character::AGameJam2024Character()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	Cable = CreateDefaultSubobject<UCableComponent>(TEXT("Cable"));
+	Cable->SetupAttachment(RootComponent);
 }
 
 void AGameJam2024Character::BeginPlay()
@@ -71,14 +73,19 @@ void AGameJam2024Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	Cable->SetHiddenInGame(true);
 }
 
 void AGameJam2024Character::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (GetWorld()->TimeSince(InteractionData.LastInteractionCheckTime) > InteractionCheckFrequency)
-		PerformInteractionCheck();
+	if(!IsSwing)
+	{
+		if (GetWorld()->TimeSince(InteractionData.LastInteractionCheckTime) > InteractionCheckFrequency)
+			PerformInteractionCheck();
+	}
 }
 
 void AGameJam2024Character::Charge()
@@ -94,6 +101,8 @@ void AGameJam2024Character::Discharge()
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -259,4 +268,53 @@ void AGameJam2024Character::Interact()
 	{
 		TargetInteractable->Interact(this);
 	}
+	if(!IsSwing)
+	{
+		Swing();
+	}
+	else
+	{
+		StopSwing();
+	}
 }
+
+void AGameJam2024Character::Swing()
+{
+	if(InteractionData.CurrentInteractable)
+	{
+		if(TargetInteractable->InteractableData.InteractableType == EInteractableType::Neuron)
+		{
+			IsSwing = true;
+			const FVector Direction = InteractionData.CurrentInteractable->GetActorLocation() - GetActorLocation();
+			SetActorRotation(FRotator::MakeFromEuler(Direction));
+			const float BoneLenght= FVector::DistXY(this->GetActorLocation(),InteractionData.CurrentInteractable->GetActorLocation());
+			BoneScale= BoneLenght/ 100;
+			Cable->SetWorldLocation(InteractionData.CurrentInteractable->GetActorLocation());
+			const FTransform Transform =GetMesh()->GetSocketTransform(FName("SwingSocket"),ERelativeTransformSpace::RTS_Actor);
+			Cable->EndLocation=Transform.GetLocation();
+			CableLenghtPlayer=BoneLenght-100;
+			Cable->CableLength=CableLenghtPlayer;
+		}
+	}
+}
+
+void AGameJam2024Character::StopSwing()
+{
+	LaunchCharacter(GetVelocity() + LaunchSpeed,false,false);
+	IsSwing=false;
+	Cable->EndLocation = FVector(0,0,0);
+	GetCharacterMovement()->AirControl=0.2f;
+}
+
+void AGameJam2024Character::CalculateSwingForce()
+{
+	const FVector Direction = InteractionData.CurrentInteractable->GetActorLocation() - GetActorLocation();
+	SetActorRotation(FRotator::MakeFromEuler(Direction));
+	Cable->SetWorldLocation(InteractionData.CurrentInteractable->GetActorLocation());
+	const FTransform Transform =GetMesh()->GetSocketTransform(FName("SwingSocket"),ERelativeTransformSpace::RTS_Actor);
+	Cable->EndLocation=Transform.GetLocation();
+	Cable->CableLength=CableLenghtPlayer;
+	GetCharacterMovement()->AddForce((Direction.Dot(GetVelocity())*Direction.GetSafeNormal())*-2);
+	GetCharacterMovement()->AirControl=2.f;
+}
+
