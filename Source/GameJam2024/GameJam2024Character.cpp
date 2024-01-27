@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Quaternion.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
 
@@ -284,14 +285,23 @@ void AGameJam2024Character::Swing()
 	{
 		if (TargetInteractable->InteractableData.InteractableType == EInteractableType::Neuron)
 		{
-			FRotator MyRot = GetActorRotation();
-			InteractionData.CurrentInteractable->SetActorRotation(GetActorRotation());
+			/*SetActorRotation(
+				UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
+				                                       InteractionData.CurrentInteractable->GetActorLocation()));*/
 			StartingRotator = GetActorRightVector().Rotation();
+			StartingRight = GetActorRightVector();
+			FVector direction = (GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).
+				GetSafeNormal();
+			float dot = direction.Dot(FVector::DownVector);
+			GEngine->AddOnScreenDebugMessage(3, 50, FColor::Red, FString::SanitizeFloat(dot));
+			GEngine->AddOnScreenDebugMessage(4, 50, FColor::Black, direction.ToString());
+			OffsetAngle = FMath::RadiansToDegrees(FMath::Acos(FVector::DownVector.Dot(
+				(GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).GetSafeNormal())));
 			AttachToActor(InteractionData.CurrentInteractable, FAttachmentTransformRules::KeepWorldTransform);
 			IsSwing = true;
-			SwingTimer = 0;
+			//SwingTimer = 0;
+			SwingTimer = UKismetMathLibrary::MapRangeUnclamped(OffsetAngle, 0.f, 60.f, 0.f, 1.f);
 			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Flying;
-			SetActorRotation(GetActorRotation()-MyRot);
 		}
 	}
 }
@@ -300,13 +310,22 @@ void AGameJam2024Character::StopSwing()
 {
 	IsSwing = false;
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	LaunchCharacter(GetActorForwardVector()*1000,false,false);
+	LaunchCharacter(GetActorForwardVector() * 1000, false, false);
+	InteractionData.CurrentInteractable->SetActorRotation(FRotator::ZeroRotator);
 }
 
 void AGameJam2024Character::CalculateSwingForce(float DeltaTime)
 {
-	const float LerpRotation = FMath::Sin(SwingTimer * (3 - PI / 2) + 1) / 2;
-	const float NewRotation = FMath::Lerp(60, -60, LerpRotation);
-	InteractionData.CurrentInteractable->SetActorRotation(FRotator(NewRotation, 0, StartingRotator.Roll));
+	const float LerpRotation = FMath::Sin(SwingTimer);
+	const double NewRotation = FMath::Lerp(0, 60, LerpRotation);
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Green, FString::SanitizeFloat(NewRotation));
+	GEngine->AddOnScreenDebugMessage(98, 5, FColor::Cyan, FString::SanitizeFloat(LerpRotation));
+	GEngine->AddOnScreenDebugMessage(2, 5, FColor::Blue, FString::SanitizeFloat(OffsetAngle));
+	GEngine->AddOnScreenDebugMessage(99, 50, FColor::Yellow, FString::SanitizeFloat(SwingTimer));
+
+	const FQuat Quat = FQuat(StartingRight, FMath::DegreesToRadians(NewRotation - OffsetAngle));
+	InteractionData.CurrentInteractable->SetActorRotation(FRotator::MakeFromEuler(Quat.Euler()));
 	SwingTimer += DeltaTime;
+
+	SetActorRotation(FRotator(65 * FMath::Sin(65 * FMath::Sin(DeltaTime) / 30), 0, 0));
 }

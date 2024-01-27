@@ -83,9 +83,17 @@ class AGameJam2024Character : public ACharacter, public IChargable
 
 	UPROPERTY()
 	float SwingTimer = 0;
+	UPROPERTY()
+	float SwingTimer2 = 0;
 
 	UPROPERTY()
 	FRotator StartingRotator;
+
+	UPROPERTY()
+	FVector StartingRight;
+
+	UPROPERTY()
+	float OffsetAngle;
 
 public:
 	AGameJam2024Character();
