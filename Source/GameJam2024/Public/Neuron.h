@@ -15,12 +15,20 @@ class GAMEJAM2024_API ANeuron : public AActor , public IChargable, public IInter
 private:
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere,Category="Item Data")
+	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere,Category="Item Data")
+	USceneComponent* DefaultRoot;
+
 public:	
 	
 	ANeuron();
 	virtual void Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode) override;
 	virtual void Charge(IChargable* Charger) override;
 	virtual void DisCharge() override;
+	void BeginFocus();
+	void EndFocus();
 
 protected:
 	

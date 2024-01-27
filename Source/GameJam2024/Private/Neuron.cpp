@@ -11,6 +11,12 @@ ANeuron::ANeuron()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	DefaultRoot = CreateDefaultSubobject<USceneComponent>("Default Scene Root");
+	RootComponent =DefaultRoot;
+
+	Mesh= CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh->SetupAttachment(DefaultRoot);
+
 }
 
 // Called when the game starts or when spawned
@@ -45,4 +51,24 @@ void ANeuron::Charge(IChargable* Charger)
 void ANeuron::DisCharge()
 {
 	IChargable::DisCharge();
+}
+
+void ANeuron::BeginFocus()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - BeginFocus"));
+	if (Mesh)
+	{
+		Mesh->SetRenderCustomDepth(true);
+		UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - true"));
+	}
+}
+
+void ANeuron::EndFocus()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - EndFocus"));
+	if (Mesh)
+	{
+		Mesh->SetRenderCustomDepth(false);
+		UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - false"));
+	}
 }

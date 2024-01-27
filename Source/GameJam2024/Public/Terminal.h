@@ -13,13 +13,16 @@ class GAMEJAM2024_API ATerminal : public AActor, public IInteractable, public IC
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere,Category="Item Data")
+	UPROPERTY(EditAnywhere, Category="Item Data")
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere,Category="Item Data")
+	UPROPERTY(VisibleAnywhere, Category="Item Data")
 	USceneComponent* DefaultRoot;
-	
-public:	
+
+	UPROPERTY(EditAnywhere, Category="Item Data")
+	bool IsChargedOnSpawn;
+
+public:
 	// Sets default values for this actor's properties
 	ATerminal();
 
@@ -27,7 +30,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void Charge(IChargable* Charger) override;

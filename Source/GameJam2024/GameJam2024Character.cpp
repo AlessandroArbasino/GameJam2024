@@ -86,6 +86,9 @@ void AGameJam2024Character::Charge(IChargable* Charger)
 	IChargable::Charge(Charger);
 
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
+	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "PlayerCharged");
+
+	
 }
 
 void AGameJam2024Character::DisCharge()
@@ -93,6 +96,9 @@ void AGameJam2024Character::DisCharge()
 	IChargable::DisCharge();
 
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
+
+	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,7 +119,7 @@ void AGameJam2024Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGameJam2024Character::Look);
 
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this,
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this,
 		                                   &AGameJam2024Character::Interact);
 	}
 	else

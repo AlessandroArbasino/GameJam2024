@@ -23,6 +23,9 @@ void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
 	InteractableData.InteractableType = EInteractableType::Neuron;
+
+	if (IsChargedOnSpawn)
+		IsCharged = true;
 }
 
 // Called every frame
@@ -63,5 +66,8 @@ void ATerminal::EndFocus()
 
 void ATerminal::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
-	Charge(PlayerCharacter);
+	if (IsCharged)
+		PlayerCharacter->Charge(this);
+	else
+		Charge(PlayerCharacter);
 }
