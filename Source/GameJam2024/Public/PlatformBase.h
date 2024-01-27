@@ -40,6 +40,9 @@ class GAMEJAM2024_API APlatformBase : public AActor,public IActivable
 	UPROPERTY(EditAnywhere,Category="Platform Params")
 	bool IsLooping = true;
 
+	UPROPERTY(EditAnywhere,Category="Platform Params")
+	bool IsActive = true;
+
 	UPROPERTY()
 	bool IsMoving = false;
 	

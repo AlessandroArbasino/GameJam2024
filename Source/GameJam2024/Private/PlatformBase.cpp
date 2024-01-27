@@ -30,7 +30,7 @@ void APlatformBase::BeginPlay()
 	Super::BeginPlay();
 	if(PlatformType == EPlatformType::Toggle)
 	{
-		SetActorStatus(false,this);
+		SetActorStatus(IsActive,this);
 	}
 	
 }
@@ -60,7 +60,8 @@ void APlatformBase::Active()
 		break;
 	case EPlatformType::Toggle:
 		IsMoving=true;
-		SetActorStatus(true,this);
+		IsActive=!IsActive;
+		SetActorStatus(IsActive,this);
 		break;
 	}
 }
@@ -76,7 +77,8 @@ void APlatformBase::Deactive()
 		break;
 	case EPlatformType::Toggle:
 		IsMoving=false;
-		SetActorStatus(false,this);
+		IsActive=!IsActive;
+		SetActorStatus(IsActive,this);
 		break;
 	}
 }
