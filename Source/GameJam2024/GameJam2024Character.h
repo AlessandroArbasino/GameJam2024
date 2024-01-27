@@ -144,7 +144,9 @@ protected:
 	virtual void BeginPlay();
 	void Tick(float DeltaSeconds);
 
+	UFUNCTION(BlueprintCallable)
 	void Swing();
+	UFUNCTION(BlueprintCallable)
 	void StopSwing();
 	void CalculateSwingForce(float DeltaTime);
 

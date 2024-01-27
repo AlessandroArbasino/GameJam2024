@@ -313,9 +313,11 @@ void AGameJam2024Character::Swing()
 void AGameJam2024Character::StopSwing()
 {
 	IsSwing = false;
+	IsThrowing =false;
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	LaunchCharacter(GetActorForwardVector() * 1000, false, false);
 	InteractionData.CurrentInteractable->SetActorRotation(FRotator::ZeroRotator);
+	NoInteractableFound();
 }
 
 void AGameJam2024Character::CalculateSwingForce(float DeltaTime)
