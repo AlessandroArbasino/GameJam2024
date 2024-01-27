@@ -95,6 +95,13 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	UPROPERTY()
 	float OffsetAngle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	float MinSwingDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	float MaxSwingDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	float SwingDistanceFixValue;
+
 public:
 	AGameJam2024Character();
 

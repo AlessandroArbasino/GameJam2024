@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Quaternion.h"
+#include "EntitySystem/MovieSceneComponentDebug.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
@@ -302,6 +303,7 @@ void AGameJam2024Character::Swing()
 			//SwingTimer = 0;
 			SwingTimer = UKismetMathLibrary::MapRangeUnclamped(OffsetAngle, 0.f, 60.f, 0.f, 1.f);
 			GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Flying;
+			GetCharacterMovement()->Velocity = FVector::Zero();
 		}
 	}
 }
@@ -323,9 +325,27 @@ void AGameJam2024Character::CalculateSwingForce(float DeltaTime)
 	GEngine->AddOnScreenDebugMessage(2, 5, FColor::Blue, FString::SanitizeFloat(OffsetAngle));
 	GEngine->AddOnScreenDebugMessage(99, 50, FColor::Yellow, FString::SanitizeFloat(SwingTimer));
 
+
+	float Distance = FVector::Distance(GetActorLocation(), InteractionData.CurrentInteractable->GetActorLocation());
+	GEngine->AddOnScreenDebugMessage(97, 50, FColor::Magenta, FString::SanitizeFloat(Distance));
+
+	if (Distance > MaxSwingDistance)
+	{
+		// FVector direction = (GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).
+		// 	GetSafeNormal();
+		// AddActorWorldOffset(direction * -1 * SwingDistanceFixValue);
+		//Avvicina player a neurone
+	}
+	else if (Distance < MinSwingDistance)
+	{
+		//Allontana player
+		// FVector direction = (GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).
+		// 	GetSafeNormal();
+		// AddActorWorldOffset(direction * SwingDistanceFixValue);
+	}
+
 	const FQuat Quat = FQuat(StartingRight, FMath::DegreesToRadians(NewRotation - OffsetAngle));
 	InteractionData.CurrentInteractable->SetActorRotation(FRotator::MakeFromEuler(Quat.Euler()));
-	SwingTimer += DeltaTime;
-
 	SetActorRotation(FRotator(65 * FMath::Sin(65 * FMath::Sin(DeltaTime) / 30), 0, 0));
+	SwingTimer += DeltaTime;
 }
