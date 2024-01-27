@@ -37,12 +37,16 @@ void AButtonBase::Tick(float DeltaTime)
 }
 void AButtonBase::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
+	if(hasTriggered)
+		return;
+	
 	for (AActor*  Activable : ActivableActor)
 	{
 		if(Activable->GetClass()->ImplementsInterface(UActivable::StaticClass()))
 			Cast<IActivable>(Activable)->Active();
 		UE_LOG(LogTemp,Warning, TEXT("{0}"))
 	}
+	hasTriggered = true;
 }
 void AButtonBase::BeginFocus()
 {

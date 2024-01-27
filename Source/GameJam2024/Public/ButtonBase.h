@@ -20,6 +20,9 @@ class GAMEJAM2024_API AButtonBase : public AActor , public IInteractable
 	UPROPERTY(VisibleAnywhere,Category="Item Data")
 	USceneComponent* DefaultRoot;
 
+	UPROPERTY()
+	bool hasTriggered = false;
+
 	
 public:	
 	
