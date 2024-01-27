@@ -22,7 +22,7 @@ ATerminal::ATerminal()
 void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
-	InteractableData.InteractableType = EInteractableType::Neuron;
+	InteractableData.InteractableType = EInteractableType::Terminals;
 
 	if (IsChargedOnSpawn)
 		IsCharged = true;
