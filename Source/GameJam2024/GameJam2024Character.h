@@ -104,7 +104,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-	
+
 	void PerformInteractionCheck();
 	void FoundInteractable(AActor* NewInteractable);
 	void NoInteractableFound();
@@ -127,10 +127,6 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	virtual void Charge(IChargable* Charger) override;
-	virtual void DisCharge() override;
-
-	UFUNCTION(BlueprintCallable)
-	void CalculateSwingForce();
-	
+	virtual void Charge() override;
+	virtual void Discharge() override;
 };

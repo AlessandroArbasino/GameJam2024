@@ -88,18 +88,18 @@ void AGameJam2024Character::Tick(float DeltaSeconds)
 	}
 }
 
-void AGameJam2024Character::Charge(IChargable* Charger)
+void AGameJam2024Character::Charge()
 {
-	IChargable::Charge(Charger);
-
+	IChargable::Charge();
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
+	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "PlayerCharged");
 }
 
-void AGameJam2024Character::DisCharge()
+void AGameJam2024Character::Discharge()
 {
-	IChargable::DisCharge();
-
+	IChargable::Discharge();
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
+	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
 }
 
 
@@ -122,7 +122,7 @@ void AGameJam2024Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGameJam2024Character::Look);
 
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this,
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this,
 		                                   &AGameJam2024Character::Interact);
 	}
 	else
@@ -266,7 +266,6 @@ void AGameJam2024Character::Interact()
 	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
 	if (IsValid(TargetInteractable.GetObject()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("not interacting with Moveable"));
 		TargetInteractable->Interact(this);
 	}
 	if(!IsSwing)

@@ -21,33 +21,28 @@ class GAMEJAM2024_API IChargable
 	GENERATED_BODY()
 
 public :
-	bool CanDischarge=false;
-	bool IsCharged=false;
+	bool CanDischarge = true;
 
-	TArray<IActivable*> ActivableArray;
+	bool IsCharged = false;
 
-	virtual void Charge(IChargable* Charger)
+	TArray<AActor*> ActivableArray;
+
+	virtual void ChargeExcange(IChargable* Target)
 	{
-		IsCharged=true;
-	
-		for (IActivable*  Activable : ActivableArray)
+		if (!CanDischarge || !Target->CanDischarge)
+			return;
+		if (IsCharged == Target->IsCharged)
+			return;
+
+		if (IsCharged)
 		{
-			Activable->Active();
+			Target->Charge();
+			Discharge();
 		}
-	
-		Charger->DisCharge();
-	}
-
-	virtual void DisCharge()
-	{
-		if(CanDischarge)
+		else
 		{
-			IsCharged=false;
-			
-			for (IActivable* Activable : ActivableArray)
-			{
-				Activable->Deactive();
-			}
+			Target->Discharge();
+			Charge();
 		}
 	}
 
@@ -61,5 +56,27 @@ public :
 		return CanDischarge;
 	}
 
-public:
+	virtual void Charge()
+	{
+		IsCharged = true;
+		for (AActor* ActivableActor : ActivableArray)
+		{
+			if (ActivableActor->GetClass()->ImplementsInterface(UActivable::StaticClass()))
+			{
+				Cast<IActivable>(ActivableActor)->Active();
+			}
+		}
+	}
+
+	virtual void Discharge()
+	{
+		IsCharged = false;
+		for (AActor* ActivableActor : ActivableArray)
+		{
+			if (ActivableActor->GetClass()->ImplementsInterface(UActivable::StaticClass()))
+			{
+				Cast<IActivable>(ActivableActor)->Deactive();
+			}
+		}
+	}
 };
