@@ -37,22 +37,22 @@ void ATerminal::Tick(float DeltaTime)
 
 void ATerminal::BeginFocus()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - BeginFocus"));
-	if (Mesh)
-	{
-		Mesh->SetRenderCustomDepth(true);
-		UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - true"));
-	}
+	// UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - BeginFocus"));
+	// if (Mesh)
+	// {
+	// 	Mesh->SetRenderCustomDepth(true);
+	// 	UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - true"));
+	// }
 }
 
 void ATerminal::EndFocus()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - EndFocus"));
-	if (Mesh)
-	{
-		Mesh->SetRenderCustomDepth(false);
-		UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - false"));
-	}
+	// UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - EndFocus"));
+	// if (Mesh)
+	// {
+	// 	Mesh->SetRenderCustomDepth(false);
+	// 	UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - SetRenderCustomDepth - false"));
+	// }
 }
 
 void ATerminal::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
