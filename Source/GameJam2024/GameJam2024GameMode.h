@@ -20,6 +20,9 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<ACharacter> Player;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> WidgeClass;
 };
 
 

@@ -2,6 +2,8 @@
 
 #include "GameJam2024GameMode.h"
 #include "GameJam2024Character.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -32,5 +34,9 @@ void AGameJam2024GameMode::Tick(float DeltaSeconds)
 
 void AGameJam2024GameMode::OnDestroy(AActor* DestroyedActor)
 {
-	UGameplayStatics::OpenLevel(this,FName(*GetWorld()->GetName()),false);
+	UUserWidget* DeadUi = Cast<UUserWidget>(CreateWidget(GetWorld(),WidgeClass));
+	if(!DeadUi) return; //spawned just once
+	DeadUi->AddToViewport(-1);
+	UGameplayStatics::GetPlayerController(this,0)->bShowMouseCursor=true;
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(UGameplayStatics::GetPlayerController(this,0),DeadUi);
 }
