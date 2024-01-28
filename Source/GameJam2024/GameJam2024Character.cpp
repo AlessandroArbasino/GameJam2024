@@ -10,9 +10,12 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "NiagaraComponent.h"
 #include "Quaternion.h"
 #include "EntitySystem/MovieSceneComponentDebug.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
@@ -59,12 +62,17 @@ AGameJam2024Character::AGameJam2024Character()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>("Niagara");
+	NiagaraComp->SetAutoActivate(false);
+	NiagaraComp->SetupAttachment(RootComponent);
 }
 
 void AGameJam2024Character::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+	if (NiagaraComp)
+		NiagaraComp->SetActive(false);
 
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
@@ -88,7 +96,6 @@ void AGameJam2024Character::Tick(float DeltaSeconds)
 	}
 	if (IsSwing)
 		CalculateSwingForce(DeltaSeconds);
-	
 }
 
 void AGameJam2024Character::Charge()
@@ -96,6 +103,7 @@ void AGameJam2024Character::Charge()
 	IChargable::Charge();
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "PlayerCharged");
+	NiagaraComp->Activate();
 }
 
 void AGameJam2024Character::Discharge()
@@ -103,8 +111,8 @@ void AGameJam2024Character::Discharge()
 	IChargable::Discharge();
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
+	NiagaraComp->Deactivate();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -273,7 +281,7 @@ void AGameJam2024Character::Interact()
 	if (IsValid(TargetInteractable.GetObject()))
 	{
 		TargetInteractable->Interact(this);
-		IsThrowing =true;
+		IsThrowing = true;
 	}
 	if (!IsSwing)
 	{
@@ -283,6 +291,11 @@ void AGameJam2024Character::Interact()
 	{
 		StopSwing();
 	}
+
+	if (IsCharged)
+		NiagaraComp->Activate();
+	else
+		NiagaraComp->Deactivate();
 }
 
 void AGameJam2024Character::Swing()
@@ -314,10 +327,10 @@ void AGameJam2024Character::Swing()
 void AGameJam2024Character::StopSwing()
 {
 	IsSwing = false;
-	IsThrowing =false;
+	IsThrowing = false;
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	FVector Direction = GetActorLocation()-InteractionData.CurrentInteractable->GetActorLocation();
-	Direction.Z=JumpForceZ;
+	FVector Direction = GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation();
+	Direction.Z = JumpForceZ;
 	LaunchCharacter((Direction).GetSafeNormal() * JumpForceForward, true, true);
 	InteractionData.CurrentInteractable->SetActorRotation(FRotator::ZeroRotator);
 	NoInteractableFound();
@@ -327,7 +340,7 @@ void AGameJam2024Character::CalculateSwingForce(float DeltaTime)
 {
 	const float LerpRotation = FMath::Sin(SwingTimer);
 	const double NewRotation = FMath::Lerp(0, 60, LerpRotation);
-	
+
 	float Distance = FVector::Distance(GetActorLocation(), InteractionData.CurrentInteractable->GetActorLocation());
 
 	if (Distance > MaxSwingDistance)

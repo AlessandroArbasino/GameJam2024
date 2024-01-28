@@ -3,7 +3,8 @@
 
 #include "Alcohol.h"
 
-#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameJam2024/GameJam2024Character.h"
 
 
 // Sets default values
@@ -15,9 +16,9 @@ AAlcohol::AAlcohol()
 	DefaultRout=CreateDefaultSubobject<USceneComponent>("DefaultRoot");
 	RootComponent=DefaultRout;
 
-	AlcoholCollider=CreateDefaultSubobject<UBoxComponent>("Collider");
+	AlcoholCollider=CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	AlcoholCollider->SetupAttachment(DefaultRout);
-	
+	     
 }
 
 // Called when the game starts or when spawned
@@ -32,5 +33,20 @@ void AAlcohol::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AAlcohol::Charge()
+{
+	IChargable::Charge();
+}
+
+void AAlcohol::Discharge()
+{
+	IChargable::Discharge();
+}
+
+void AAlcohol::ChargeExcange(IChargable* Target)
+{
+	IChargable::ChargeExcange(Target);
 }
 

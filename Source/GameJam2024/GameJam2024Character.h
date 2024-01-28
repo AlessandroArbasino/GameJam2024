@@ -9,6 +9,7 @@
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
 #include "CableComponent.h"
+#include "NiagaraComponent.h"
 #include "GameJam2024Character.generated.h"
 class UInputAction;
 class UInputMappingContext;
@@ -28,7 +29,7 @@ struct FInteractionData
 		LastInteractionCheckTime = 0.0f;
 	}
 
-	UPROPERTY(VisibleAnyWhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite)
 	AActor* CurrentInteractable;
 
 	UPROPERTY()
@@ -39,6 +40,7 @@ UCLASS(config=Game)
 class AGameJam2024Character : public ACharacter, public IChargable
 {
 	GENERATED_BODY()
+
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -75,13 +77,13 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	float InteractionCheckDistance;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
-	float JumpForceZ=300;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
-	float JumpForceForward=1000;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float JumpForceZ = 300;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float JumpForceForward = 1000;
 	FTimerHandle TimerHandle_Interaction;
 
-
+public:
 	UPROPERTY()
 	USceneComponent* SwingPivot;
 
@@ -106,6 +108,9 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
 	float SwingDistanceFixValue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* NiagaraComp;
+
 public:
 	AGameJam2024Character();
 
@@ -120,10 +125,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	FVector LaunchSpeed{0, 0, 100};
-	
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FInteractionData InteractionData;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsThrowing = false;
 
 protected:

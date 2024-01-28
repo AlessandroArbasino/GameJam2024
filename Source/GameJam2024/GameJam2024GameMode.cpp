@@ -36,7 +36,7 @@ void AGameJam2024GameMode::OnDestroy(AActor* DestroyedActor)
 {
 	UUserWidget* DeadUi = Cast<UUserWidget>(CreateWidget(GetWorld(),WidgeClass));
 	if(!DeadUi) return; //spawned just once
-	DeadUi->AddToViewport(-1);
+	DeadUi->AddToViewport();
 	UGameplayStatics::GetPlayerController(this,0)->bShowMouseCursor=true;
-	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(UGameplayStatics::GetPlayerController(this,0),DeadUi);
+	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(UGameplayStatics::GetPlayerController(this,0),DeadUi);
 }

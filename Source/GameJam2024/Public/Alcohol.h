@@ -8,7 +8,7 @@
 #include "Alcohol.generated.h"
 
 
-class UBoxComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class GAMEJAM2024_API AAlcohol : public AActor, public IChargable
@@ -16,7 +16,7 @@ class GAMEJAM2024_API AAlcohol : public AActor, public IChargable
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	UBoxComponent* AlcoholCollider;
+	UStaticMeshComponent* AlcoholCollider;
 
 	UPROPERTY(EditAnywhere)
 	USceneComponent* DefaultRout;
@@ -33,5 +33,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void Charge() override;
+	virtual void Discharge() override;
+	virtual void ChargeExcange(IChargable* Target) override;
 };
