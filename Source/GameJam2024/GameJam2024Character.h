@@ -8,6 +8,7 @@
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
 #include "CableComponent.h"
+#include "CrossairWidget.h"
 #include "Sound/SoundCue.h"
 #include "NiagaraComponent.h"
 #include "GameJam2024Character.generated.h"
@@ -53,6 +54,10 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	/** Udio */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UAudioComponent* AudioComponent;
+
+	/** Udio */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCrossairWidget* UCrossairWidget;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))

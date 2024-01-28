@@ -235,6 +235,7 @@ void AGameJam2024Character::PerformInteractionCheck()
 		if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
 		{
 			DrawDebugLine(GetWorld(), TraceStart, HitResult.Location, FColor::Green, false, 0.2, 0, 5);
+			UCrossairWidget->SetCrossairColor(0.3, 1, 0.1);
 			if (HitResult.GetActor() != InteractionData.CurrentInteractable)
 			{
 				FoundInteractable(HitResult.GetActor());
@@ -243,11 +244,16 @@ void AGameJam2024Character::PerformInteractionCheck()
 			if (HitResult.GetActor() == InteractionData.CurrentInteractable)
 				return;
 		}
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Yellow, false, 0.2, 0, 5);
+		UCrossairWidget->SetCrossairColor(255, 255, 255);
 		NoInteractableFound();
 	}
 	//no collision with objects
 	else
+	{
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Yellow, false, 0.2, 0, 5);
+		UCrossairWidget->SetCrossairColor(255, 255, 255);
+	}
 }
 
 void AGameJam2024Character::FoundInteractable(AActor* NewInteractable)
