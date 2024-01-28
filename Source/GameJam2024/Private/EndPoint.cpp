@@ -4,6 +4,7 @@
 #include "EndPoint.h"
 
 #include "GameJam2024/GameJam2024Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEndPoint::AEndPoint()
@@ -62,4 +63,5 @@ void AEndPoint::Active()
 {
 	IActivable::Active();
 	//TODO END LEVEL AND CHANGE LEVEL
+	UGameplayStatics::OpenLevel(GetWorld(),"MainMenu");
 }

@@ -21,15 +21,7 @@ AGameJam2024GameMode::AGameJam2024GameMode()
 void AGameJam2024GameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if(!Player)
-		Player=UGameplayStatics::GetPlayerCharacter(this,0);
-	else
-	{
-		if(!IsValid(Player))
-			OnDestroy(this);
-	}
-	
+		
 }
 
 void AGameJam2024GameMode::OnDestroy(AActor* DestroyedActor)
