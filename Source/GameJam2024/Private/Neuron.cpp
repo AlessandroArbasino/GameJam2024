@@ -52,7 +52,6 @@ void ANeuron::Interact(AGameJam2024Character* PlayerCharacter, int32 Interaction
 	if(interactions%2!=0)
 	{
 		PlayerCharacter->ChargeExcange(this);
-		GEngine->AddOnScreenDebugMessage(1, 3, FColor::Magenta, FString::SanitizeFloat(interactions));
 	}
 	if (IsCharged)
 		NiagaraComponent->Activate();

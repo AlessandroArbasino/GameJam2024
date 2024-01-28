@@ -61,6 +61,5 @@ void AEndPoint::Interact(AGameJam2024Character* PlayerCharacter, int32 Interacti
 void AEndPoint::Active()
 {
 	IActivable::Active();
-	GEngine->AddOnScreenDebugMessage(50, 10, FColor::Red, "LEVEL COMPLETED");
 	//TODO END LEVEL AND CHANGE LEVEL
 }

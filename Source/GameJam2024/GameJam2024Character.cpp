@@ -124,7 +124,6 @@ void AGameJam2024Character::Charge()
 {
 	IChargable::Charge();
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
-	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "PlayerCharged");
 	NiagaraComp->Activate();
 	PropellerAudioComponentCharge->SetSound(ChargeTransferSound);
 	PropellerAudioComponentCharge->Play();
@@ -136,7 +135,6 @@ void AGameJam2024Character::Discharge()
 {
 	IChargable::Discharge();
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
-	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
 	NiagaraComp->Deactivate();
 	PropellerAudioComponentCharge->SetSound(ChargeTransferSound);
 	PropellerAudioComponentCharge->Play();
