@@ -12,6 +12,8 @@
 #include "InputActionValue.h"
 #include "NiagaraComponent.h"
 #include "Quaternion.h"
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#include "Components/AudioComponent.h"
 #include "EntitySystem/MovieSceneComponentDebug.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
@@ -65,6 +67,24 @@ AGameJam2024Character::AGameJam2024Character()
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>("Niagara");
 	NiagaraComp->SetAutoActivate(false);
 	NiagaraComp->SetupAttachment(RootComponent);
+
+	PropellerAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PropellerAudioComp"));
+	PropellerAudioComponent->bAutoActivate = false;
+	PropellerAudioComponent->SetupAttachment(RootComponent);
+
+	PropellerAudioComponentCharge = CreateDefaultSubobject<UAudioComponent>(TEXT("PropellerAudioComponentCharge"));
+	PropellerAudioComponentCharge->bAutoActivate = false;
+	PropellerAudioComponentCharge->SetupAttachment(RootComponent);
+
+	PropellerAudioComponentWhileCharged = CreateDefaultSubobject<UAudioComponent>(
+		TEXT("PropellerAudioComponentWhileCharged"));
+	PropellerAudioComponentWhileCharged->bAutoActivate = false;
+	PropellerAudioComponentWhileCharged->SetupAttachment(RootComponent);
+
+	PropellerAudioComponentBackgroundMusic = CreateDefaultSubobject<UAudioComponent>(
+		TEXT("PropellerAudioComponentBackgroundMusic"));
+	PropellerAudioComponentBackgroundMusic->bAutoActivate = false;
+	PropellerAudioComponentBackgroundMusic->SetupAttachment(RootComponent);
 }
 
 void AGameJam2024Character::BeginPlay()
@@ -83,6 +103,8 @@ void AGameJam2024Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	PropellerAudioComponentBackgroundMusic->SetSound(BackgroundMusic);
+	PropellerAudioComponentBackgroundMusic->Play();
 }
 
 void AGameJam2024Character::Tick(float DeltaSeconds)
@@ -104,6 +126,10 @@ void AGameJam2024Character::Charge()
 	GetCapsuleComponent()->SetCollisionProfileName("PlayerCharged");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "PlayerCharged");
 	NiagaraComp->Activate();
+	PropellerAudioComponentCharge->SetSound(ChargeTransferSound);
+	PropellerAudioComponentCharge->Play();
+	PropellerAudioComponentWhileCharged->SetSound(WhileChargedSound);
+	PropellerAudioComponentWhileCharged->Play();
 }
 
 void AGameJam2024Character::Discharge()
@@ -112,8 +138,17 @@ void AGameJam2024Character::Discharge()
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
 	NiagaraComp->Deactivate();
+	PropellerAudioComponentCharge->SetSound(ChargeTransferSound);
+	PropellerAudioComponentCharge->Play();
+	PropellerAudioComponentWhileCharged->Stop();
 }
 
+void AGameJam2024Character::Jump()
+{
+	Super::Jump();
+	PropellerAudioComponent->SetSound(JumpSound);
+	PropellerAudioComponent->Play();
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -280,8 +315,16 @@ void AGameJam2024Character::Interact()
 	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
 	if (IsValid(TargetInteractable.GetObject()))
 	{
+		PropellerAudioComponent->SetSound(PunchSound);
+		PropellerAudioComponent->Play();
 		TargetInteractable->Interact(this);
 		IsThrowing = true;
+
+		if (TargetInteractable->InteractableData.InteractableType == EInteractableType::Button)
+		{
+			PropellerAudioComponent->SetSound(ButtonPressSound);
+			PropellerAudioComponent->Play();
+		}
 	}
 	if (!IsSwing)
 	{
@@ -307,6 +350,10 @@ void AGameJam2024Character::Swing()
 			/*SetActorRotation(
 				UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
 				                                       InteractionData.CurrentInteractable->GetActorLocation()));*/
+
+			PropellerAudioComponent->SetSound(SwingBeginSound);
+			PropellerAudioComponent->Play();
+
 			StartingRotator = GetActorRightVector().Rotation();
 			StartingRight = GetActorRightVector();
 			FVector direction = (GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).
@@ -326,6 +373,8 @@ void AGameJam2024Character::Swing()
 
 void AGameJam2024Character::StopSwing()
 {
+	PropellerAudioComponent->SetSound(SwingReleaseSound);
+	PropellerAudioComponent->Play();
 	IsSwing = false;
 	IsThrowing = false;
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
