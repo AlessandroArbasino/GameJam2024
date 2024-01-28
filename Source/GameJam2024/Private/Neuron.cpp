@@ -48,13 +48,19 @@ void ANeuron::Tick(float DeltaTime)
 
 void ANeuron::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
-	PlayerCharacter->ChargeExcange(this);
-	if (!Network) return;
-	Network->UpdateNeuronNetworkNodes(IsCharged);
+	interactions++;
+	if(interactions%2!=0)
+	{
+		PlayerCharacter->ChargeExcange(this);
+		GEngine->AddOnScreenDebugMessage(1, 3, FColor::Magenta, FString::SanitizeFloat(interactions));
+	}
 	if (IsCharged)
 		NiagaraComponent->Activate();
 	else
 		NiagaraComponent->Deactivate();
+	
+	if (!Network) return;
+	Network->UpdateNeuronNetworkNodes(IsCharged);
 }
 
 void ANeuron::BeginFocus()

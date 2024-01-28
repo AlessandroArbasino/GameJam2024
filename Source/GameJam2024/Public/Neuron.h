@@ -34,6 +34,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category="Item Data")
 	UNiagaraComponent* NiagaraComponent;
 
+	int32 interactions;
+
 public:
 	ANeuron();
 	virtual void Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode) override;

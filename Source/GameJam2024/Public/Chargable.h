@@ -21,16 +21,13 @@ class GAMEJAM2024_API IChargable
 	GENERATED_BODY()
 
 public :
-	bool CanDischarge = true;
 
 	bool IsCharged = false;
-
-	TArray<AActor*> ActivableArray;
+	
+	TArray<TObjectPtr<AActor>> ActivableArray;
 
 	virtual void ChargeExcange(IChargable* Target)
 	{
-		if (!CanDischarge || !Target->CanDischarge)
-			return;
 		if (IsCharged == Target->IsCharged)
 			return;
 
@@ -50,15 +47,12 @@ public :
 	{
 		return IsCharged;
 	}
-
-	bool GetCanDischarge() const
-	{
-		return CanDischarge;
-	}
+	
 
 	virtual void Charge()
 	{
 		IsCharged = true;
+		
 		for (AActor* ActivableActor : ActivableArray)
 		{
 			if (ActivableActor->GetClass()->ImplementsInterface(UActivable::StaticClass()))
