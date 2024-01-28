@@ -9,6 +9,7 @@
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
 #include "CableComponent.h"
+#include "Sound/SoundCue.h"
 #include "GameJam2024Character.generated.h"
 class UInputAction;
 class UInputMappingContext;
@@ -28,7 +29,7 @@ struct FInteractionData
 		LastInteractionCheckTime = 0.0f;
 	}
 
-	UPROPERTY(VisibleAnyWhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite)
 	AActor* CurrentInteractable;
 
 	UPROPERTY()
@@ -47,6 +48,10 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	/** Udio */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* AudioComponent;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -75,10 +80,10 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	float InteractionCheckDistance;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
-	float JumpForceZ=300;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
-	float JumpForceForward=1000;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float JumpForceZ = 300;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float JumpForceForward = 1000;
 	FTimerHandle TimerHandle_Interaction;
 
 
@@ -106,6 +111,38 @@ class AGameJam2024Character : public ACharacter, public IChargable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
 	float SwingDistanceFixValue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* PropellerAudioComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* PropellerAudioComponentCharge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* PropellerAudioComponentWhileCharged;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swing", meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* PropellerAudioComponentBackgroundMusic;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* JumpSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* PunchSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* PunchHitSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* ChargeTransferSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* SwingBeginSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* SwingReleaseSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* ButtonPressSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* VictorySound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* DeathSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* WhileChargedSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* BackgroundMusic;
+
 public:
 	AGameJam2024Character();
 
@@ -120,10 +157,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	FVector LaunchSpeed{0, 0, 100};
-	
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FInteractionData InteractionData;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsThrowing = false;
 
 protected:
@@ -161,4 +198,5 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	virtual void Charge() override;
 	virtual void Discharge() override;
+	virtual void Jump() override;
 };
