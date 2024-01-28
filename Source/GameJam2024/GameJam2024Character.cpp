@@ -12,7 +12,6 @@
 #include "InputActionValue.h"
 #include "NiagaraComponent.h"
 #include "Quaternion.h"
-#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Components/AudioComponent.h"
 #include "EntitySystem/MovieSceneComponentDebug.h"
 #include "Kismet/GameplayStatics.h"

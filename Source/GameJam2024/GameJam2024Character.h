@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Logging/LogMacros.h"
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
 #include "CableComponent.h"
