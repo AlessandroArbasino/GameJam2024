@@ -320,6 +320,7 @@ void AGameJam2024Character::Interact()
 		if (TargetInteractable->InteractableData.InteractableType == EInteractableType::Button)
 		{
 			PropellerAudioComponent->SetSound(ButtonPressSound);
+			IsThrowing = false;
 			PropellerAudioComponent->Play();
 		}
 	}

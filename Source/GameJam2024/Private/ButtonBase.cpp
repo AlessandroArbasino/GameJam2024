@@ -54,7 +54,6 @@ void AButtonBase::Interact(AGameJam2024Character* PlayerCharacter, int32 Interac
 			}
 			
 		}
-		UE_LOG(LogTemp,Warning, TEXT("{0}"))
 	}
 	//hasTriggered = true;
 }
