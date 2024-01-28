@@ -43,8 +43,6 @@ class GAMEJAM2024_API APlatformBase : public AActor,public IActivable
 	UPROPERTY(EditAnywhere,Category="Platform Params")
 	bool IsActive = true;
 
-	UPROPERTY()
-	bool IsMoving = false;
 	
 	UPROPERTY()
 	float Timer=0;
@@ -52,6 +50,8 @@ class GAMEJAM2024_API APlatformBase : public AActor,public IActivable
 public:	
 	// Sets default values for this actor's properties
 	APlatformBase();
+	UPROPERTY(EditAnywhere)
+	bool IsMoving = false;
 
 protected:
 	// Called when the game starts or when spawned

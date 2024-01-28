@@ -3,6 +3,8 @@
 
 #include "ButtonBase.h"
 
+#include "PlatformBase.h"
+
 
 // Sets default values
 AButtonBase::AButtonBase()
@@ -43,7 +45,15 @@ void AButtonBase::Interact(AGameJam2024Character* PlayerCharacter, int32 Interac
 	for (AActor*  Activable : ActivableActor)
 	{
 		if(Activable->GetClass()->ImplementsInterface(UActivable::StaticClass()))
-			Cast<IActivable>(Activable)->Active();
+		{
+			if(Cast<APlatformBase>(Activable)->IsMoving)
+				Cast<IActivable>(Activable)->Deactive();
+			else
+			{
+				Cast<IActivable>(Activable)->Active();
+			}
+			
+		}
 		UE_LOG(LogTemp,Warning, TEXT("{0}"))
 	}
 	//hasTriggered = true;

@@ -4,6 +4,7 @@
 #include "Terminal.h"
 
 #include "GameJam2024/GameJam2024Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATerminal::ATerminal()
@@ -54,6 +55,8 @@ void ATerminal::BeginFocus()
 
 void ATerminal::EndFocus()
 {
+	AGameJam2024Character* PlayerCharacter=Cast<AGameJam2024Character>(UGameplayStatics::GetPlayerCharacter(this,0));
+	PlayerCharacter->IsThrowing=false;
 	// UE_LOG(LogTemp, Warning, TEXT("AGenericMovable - EndFocus"));
 	// if (Mesh)
 	// {
@@ -64,7 +67,10 @@ void ATerminal::EndFocus()
 
 void ATerminal::Interact(AGameJam2024Character* PlayerCharacter, int32 InteractionCode)
 {
+	IInteractable::Interact(PlayerCharacter, InteractionCode);
+
 	PlayerCharacter->ChargeExcange(this);
+	
 	if (IsCharged)
 		NiagaraComponent->Activate();
 	else
