@@ -63,5 +63,5 @@ void AEndPoint::Active()
 {
 	IActivable::Active();
 	//TODO END LEVEL AND CHANGE LEVEL
-	UGameplayStatics::OpenLevel(GetWorld(),"MainMenu");
+	UGameplayStatics::OpenLevel(GetWorld(),"CinematicViewLevelEnd");
 }
