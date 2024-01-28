@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Quaternion.h"
 #include "EntitySystem/MovieSceneComponentDebug.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Public/Chargable.h"
 #include "Public/IInteractable.h"
@@ -87,6 +88,7 @@ void AGameJam2024Character::Tick(float DeltaSeconds)
 	}
 	if (IsSwing)
 		CalculateSwingForce(DeltaSeconds);
+	
 }
 
 void AGameJam2024Character::Charge()
@@ -102,6 +104,7 @@ void AGameJam2024Character::Discharge()
 	GetCapsuleComponent()->SetCollisionProfileName("Player");
 	GEngine->AddOnScreenDebugMessage(5, 2.f, FColor::Emerald, "Player Discharged");
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -296,8 +299,6 @@ void AGameJam2024Character::Swing()
 			FVector direction = (GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).
 				GetSafeNormal();
 			float dot = direction.Dot(FVector::DownVector);
-			GEngine->AddOnScreenDebugMessage(3, 50, FColor::Red, FString::SanitizeFloat(dot));
-			GEngine->AddOnScreenDebugMessage(4, 50, FColor::Black, direction.ToString());
 			OffsetAngle = FMath::RadiansToDegrees(FMath::Acos(FVector::DownVector.Dot(
 				(GetActorLocation() - InteractionData.CurrentInteractable->GetActorLocation()).GetSafeNormal())));
 			AttachToActor(InteractionData.CurrentInteractable, FAttachmentTransformRules::KeepWorldTransform);
@@ -326,14 +327,8 @@ void AGameJam2024Character::CalculateSwingForce(float DeltaTime)
 {
 	const float LerpRotation = FMath::Sin(SwingTimer);
 	const double NewRotation = FMath::Lerp(0, 60, LerpRotation);
-	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Green, FString::SanitizeFloat(NewRotation));
-	GEngine->AddOnScreenDebugMessage(98, 5, FColor::Cyan, FString::SanitizeFloat(LerpRotation));
-	GEngine->AddOnScreenDebugMessage(2, 5, FColor::Blue, FString::SanitizeFloat(OffsetAngle));
-	GEngine->AddOnScreenDebugMessage(99, 50, FColor::Yellow, FString::SanitizeFloat(SwingTimer));
-
-
+	
 	float Distance = FVector::Distance(GetActorLocation(), InteractionData.CurrentInteractable->GetActorLocation());
-	GEngine->AddOnScreenDebugMessage(97, 50, FColor::Magenta, FString::SanitizeFloat(Distance));
 
 	if (Distance > MaxSwingDistance)
 	{

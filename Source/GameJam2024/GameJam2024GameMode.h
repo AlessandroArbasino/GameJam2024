@@ -13,6 +13,13 @@ class AGameJam2024GameMode : public AGameModeBase
 
 public:
 	AGameJam2024GameMode();
+
+	virtual void Tick(float DeltaSeconds) override;
+	UFUNCTION()
+	void OnDestroy(AActor* DestroyedActor);
+
+	UPROPERTY()
+	TObjectPtr<ACharacter> Player;
 };
 
 
